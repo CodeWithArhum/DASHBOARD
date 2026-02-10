@@ -1,11 +1,12 @@
 import https from 'https';
 import crypto from 'crypto';
+import { IncomingMessage } from 'http';
 
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID;
 const GOOGLE_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
 const GOOGLE_KEY = process.env.GOOGLE_PRIVATE_KEY ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n') : null;
 
-async function getGoogleAccessToken() {
+async function getGoogleAccessToken(): Promise<string> {
     if (!GOOGLE_EMAIL || !GOOGLE_KEY) throw new Error("Google Credentials Missing");
 
     const header = JSON.stringify({ alg: "RS256", typ: "JWT" });
@@ -32,7 +33,7 @@ async function getGoogleAccessToken() {
             path: '/token',
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        }, (res) => {
+        }, (res: IncomingMessage) => {
             let data = '';
             res.on('data', chunk => data += chunk);
             res.on('end', () => {
@@ -62,30 +63,34 @@ export async function getLeads() {
                 hostname: 'sheets.googleapis.com',
                 path: `/v4/spreadsheets/${GOOGLE_SHEET_ID}`,
                 headers: { 'Authorization': `Bearer ${token}` }
-            }, (res) => {
-                let d = ''; res.on('data', chunk => d += chunk);
+            }, (res: IncomingMessage) => {
+                let d = ''; res.on('data', (chunk: any) => d += chunk);
                 res.on('end', () => {
                     try {
                         const parsed = JSON.parse(d);
-                        if (res.statusCode && res.statusCode >= 400) reject(new Error(parsed.error?.message || "Metadata Error"));
-                        else resolve(parsed);
+                        const status = res.statusCode || 0;
+                        if (status >= 400) {
+                            reject(new Error(parsed.error?.message || `Metadata Error (${status})`));
+                        } else {
+                            resolve(parsed);
+                        }
                     } catch (e) { reject(new Error("JSON Parse Error on Metadata")); }
                 });
             }).on('error', reject).end();
         });
 
-        if (!metadata.sheets) return [];
+        if (!metadata || !metadata.sheets) return [];
         const sheetNames = metadata.sheets.map((s: any) => s.properties.title);
 
         // 2. Fetch data from each sheet
         const allLeads = await Promise.all(sheetNames.map(async (sheetName: string) => {
-            const rows: any[][] = await new Promise((resolve, reject) => {
+            const rows: any[][] = await new Promise((resolve) => {
                 https.request({
                     hostname: 'sheets.googleapis.com',
                     path: `/v4/spreadsheets/${GOOGLE_SHEET_ID}/values/${encodeURIComponent(`'${sheetName}'!A2:E`)}`,
                     headers: { 'Authorization': `Bearer ${token}` }
-                }, (res: https.IncomingMessage) => {
-                    let d = ''; res.on('data', chunk => d += chunk);
+                }, (res: IncomingMessage) => {
+                    let d = ''; res.on('data', (chunk: any) => d += chunk);
                     res.on('end', () => {
                         try {
                             const parsed = JSON.parse(d);
