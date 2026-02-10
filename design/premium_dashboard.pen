@@ -1,0 +1,91 @@
+{
+  "version": "0.6.0",
+  "children": [
+    {
+      "id": "root",
+      "name": "Elite Dashboard",
+      "type": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "fill": "#000000",
+      "layout": "horizontal",
+      "children": [
+        {
+          "id": "sidebar",
+          "name": "Navigation Side",
+          "type": "frame",
+          "width": 280,
+          "height": "fill_container",
+          "fill": "#050505",
+          "stroke": {
+            "align": "outside",
+            "thickness": { "right": 1 },
+            "fill": "#1a1a1a"
+          },
+          "layout": "vertical",
+          "padding": 40,
+          "gap": 60,
+          "children": [
+             {
+               "id": "avatar-group",
+               "type": "frame",
+               "layout": "vertical",
+               "gap": 15,
+               "children": [
+                 { "id": "avatar", "type": "ellipse", "width": 64, "height": 64, "fill": "#6366f1" },
+                 { "id": "user-label", "type": "text", "content": "Admin", "fontSize": 14, "fontWeight": "800", "fill": "#ffffff" }
+               ]
+             }
+          ]
+        },
+        {
+          "id": "main-content",
+          "name": "Canvas",
+          "type": "frame",
+          "width": "fill_container",
+          "height": "fill_container",
+          "padding": 80,
+          "layout": "vertical",
+          "gap": 40,
+          "children": [
+            {
+              "id": "header",
+              "type": "frame",
+              "layout": "horizontal",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                { "id": "title", "type": "text", "content": "DASHBOARD", "fontSize": 48, "fontWeight": "800", "fill": "#ffffff" },
+                { 
+                  "id": "primary-btn", 
+                  "type": "rectangle", 
+                  "width": 180, 
+                  "height": 56, 
+                  "cornerRadius": 16, 
+                  "fill": "#6366f1",
+                  "children": [
+                    { "id": "btn-text", "type": "text", "content": "NEW BOOKING", "fontSize": 14, "fontWeight": "800", "fill": "#ffffff" }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "metrics",
+              "type": "frame",
+              "layout": "horizontal",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                { "id": "card-1", "type": "rectangle", "width": 250, "height": 160, "cornerRadius": 32, "fill": "rgba(255,255,255,0.03)", "stroke": { "thickness": 1, "fill": "rgba(255,255,255,0.06)" }, "effect": { "type": "background_blur", "radius": 40 } },
+                { "id": "card-2", "type": "rectangle", "width": 250, "height": 160, "cornerRadius": 32, "fill": "rgba(255,255,255,0.03)", "stroke": { "thickness": 1, "fill": "rgba(255,255,255,0.06)" }, "effect": { "type": "background_blur", "radius": 40 } },
+                { "id": "card-3", "type": "rectangle", "width": 250, "height": 160, "cornerRadius": 32, "fill": "rgba(255,255,255,0.03)", "stroke": { "thickness": 1, "fill": "rgba(255,255,255,0.06)" }, "effect": { "type": "background_blur", "radius": 40 } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
