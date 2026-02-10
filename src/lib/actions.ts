@@ -14,11 +14,11 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
             throw new Error("Missing SQUARE_ACCESS_TOKEN Environment Variable");
         }
 
-        const bookingsResponse = await square.bookingsApi.listBookings(100);
+        const bookingsResponse = await square.bookingsApi.listBookings({ limit: 100 });
         const bookings = bookingsResponse.result.bookings || [];
         const totalBookings = bookings.length;
 
-        const customersResponse = await square.customersApi.listCustomers(undefined, 100);
+        const customersResponse = await square.customersApi.listCustomers({ limit: 100 });
         const customers = customersResponse.result.customers || [];
         const activeCustomers = customers.length;
 
@@ -49,7 +49,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 
 export async function getRecentBookings() {
     try {
-        const response = await square.bookingsApi.listBookings(5);
+        const response = await square.bookingsApi.listBookings({ limit: 5 });
         // Serialize QueryBigInt issues if any (Next.js server actions limitation with BigInt)
         // Square IDs are strings, but some fields might be BigInt.
         // JSON.parse(JSON.stringify) is a hack but works for simple objects.
@@ -62,7 +62,7 @@ export async function getRecentBookings() {
 
 export async function getBookings() {
     try {
-        const response = await square.bookingsApi.listBookings(100);
+        const response = await square.bookingsApi.listBookings({ limit: 100 });
         return JSON.parse(JSON.stringify(response.result.bookings || []));
     } catch (error) {
         console.error("Error fetching bookings:", error);
