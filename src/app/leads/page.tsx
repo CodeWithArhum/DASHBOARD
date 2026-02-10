@@ -11,7 +11,9 @@ export default async function LeadsHubPage() {
         square.customersApi.listCustomers(undefined, 100).catch(() => ({ result: { customers: [] } }))
     ]);
 
-    const customers = customersRes.result.customers || [];
+    const customers = JSON.parse(JSON.stringify(customersRes.result.customers || [], (k, v) =>
+        typeof v === 'bigint' ? v.toString() : v
+    ));
 
     // Match leads with customers and bookings
     const enrichedLeads = leads.map(lead => {

@@ -8,6 +8,13 @@ export interface DashboardMetrics {
     estimatedRevenue: string; // Formatted currency
 }
 
+// Helper to deep-serialize objects and handle BigInt for Next.js Server Actions
+function serialize(obj: any) {
+    return JSON.parse(JSON.stringify(obj, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+    ));
+}
+
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     try {
         if (!process.env.SQUARE_ACCESS_TOKEN) {
@@ -50,10 +57,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 export async function getRecentBookings() {
     try {
         const response = await square.bookingsApi.listBookings(5);
-        // Serialize QueryBigInt issues if any (Next.js server actions limitation with BigInt)
-        // Square IDs are strings, but some fields might be BigInt.
-        // JSON.parse(JSON.stringify) is a hack but works for simple objects.
-        return JSON.parse(JSON.stringify(response.result.bookings || []));
+        return serialize(response.result.bookings || []);
     } catch (error) {
         console.error("Error fetching recent bookings:", error);
         return [];
@@ -63,7 +67,7 @@ export async function getRecentBookings() {
 export async function getBookings() {
     try {
         const response = await square.bookingsApi.listBookings(100);
-        return JSON.parse(JSON.stringify(response.result.bookings || []));
+        return serialize(response.result.bookings || []);
     } catch (error) {
         console.error("Error fetching bookings:", error);
         return [];

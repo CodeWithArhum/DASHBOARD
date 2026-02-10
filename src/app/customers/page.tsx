@@ -8,7 +8,9 @@ export default async function CustomersPage() {
 
     try {
         const response = await square.customersApi.listCustomers(undefined, 100);
-        customers = JSON.parse(JSON.stringify(response.result.customers || []));
+        customers = JSON.parse(JSON.stringify(response.result.customers || [], (k, v) =>
+            typeof v === 'bigint' ? v.toString() : v
+        ));
     } catch (e: any) {
         console.error("Error fetching customers:", e);
         error = e.message || "Failed to load customers";
