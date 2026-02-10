@@ -8,7 +8,7 @@ export default async function LeadsHubPage() {
     const [leads, bookings, customersRes] = await Promise.all([
         getLeads(),
         getBookings(),
-        square.customersApi.listCustomers({ limit: 100 }).catch(() => ({ result: { customers: [] } }))
+        square.customersApi.listCustomers(undefined, 100).catch(() => ({ result: { customers: [] } }))
     ]);
 
     const customers = customersRes.result.customers || [];

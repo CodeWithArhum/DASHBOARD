@@ -7,7 +7,7 @@ export default async function CustomersPage() {
     let error: string | null = null;
 
     try {
-        const response = await square.customersApi.listCustomers({ limit: 100 });
+        const response = await square.customersApi.listCustomers(undefined, 100);
         customers = JSON.parse(JSON.stringify(response.result.customers || []));
     } catch (e: any) {
         console.error("Error fetching customers:", e);
