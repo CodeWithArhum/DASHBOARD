@@ -67,7 +67,7 @@ export async function getLeads() {
                 res.on('end', () => {
                     try {
                         const parsed = JSON.parse(d);
-                        if (res.statusCode >= 400) reject(new Error(parsed.error?.message || "Metadata Error"));
+                        if (res.statusCode && res.statusCode >= 400) reject(new Error(parsed.error?.message || "Metadata Error"));
                         else resolve(parsed);
                     } catch (e) { reject(new Error("JSON Parse Error on Metadata")); }
                 });
@@ -84,7 +84,7 @@ export async function getLeads() {
                     hostname: 'sheets.googleapis.com',
                     path: `/v4/spreadsheets/${GOOGLE_SHEET_ID}/values/${encodeURIComponent(`'${sheetName}'!A2:E`)}`,
                     headers: { 'Authorization': `Bearer ${token}` }
-                }, (res) => {
+                }, (res: https.IncomingMessage) => {
                     let d = ''; res.on('data', chunk => d += chunk);
                     res.on('end', () => {
                         try {
