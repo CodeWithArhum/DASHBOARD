@@ -21,11 +21,11 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
             throw new Error("Missing SQUARE_ACCESS_TOKEN Environment Variable");
         }
 
-        const bookingsResponse = await square.bookingsApi.listBookings(100);
+        const bookingsResponse = await square.bookingsApi.listBookings();
         const bookings = bookingsResponse.result.bookings || [];
         const totalBookings = bookings.length;
 
-        const customersResponse = await square.customersApi.listCustomers(undefined, 100);
+        const customersResponse = await square.customersApi.listCustomers();
         const customers = customersResponse.result.customers || [];
         const activeCustomers = customers.length;
 
@@ -56,8 +56,8 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 
 export async function getRecentBookings() {
     try {
-        const response = await square.bookingsApi.listBookings(5);
-        return serialize(response.result.bookings || []);
+        const response = await square.bookingsApi.listBookings();
+        return serialize((response.result.bookings || []).slice(0, 5));
     } catch (error) {
         console.error("Error fetching recent bookings:", error);
         return [];
@@ -66,7 +66,7 @@ export async function getRecentBookings() {
 
 export async function getBookings() {
     try {
-        const response = await square.bookingsApi.listBookings(100);
+        const response = await square.bookingsApi.listBookings();
         return serialize(response.result.bookings || []);
     } catch (error) {
         console.error("Error fetching bookings:", error);

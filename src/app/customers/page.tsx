@@ -7,7 +7,8 @@ export default async function CustomersPage() {
     let error: string | null = null;
 
     try {
-        const response = await square.customersApi.listCustomers(undefined, 100);
+        const response = await square.customersApi.listCustomers();
+        // Manual serialization to handle BigInt
         customers = JSON.parse(JSON.stringify(response.result.customers || [], (k, v) =>
             typeof v === 'bigint' ? v.toString() : v
         ));
