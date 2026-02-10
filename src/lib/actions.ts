@@ -12,17 +12,13 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     try {
         // 1. Fetch recent bookings (last 30 days usually, but let's just get latest 100 for overview)
         // Note: In a real app, you'd calculate dates.
-        const bookingsResponse = await square.bookingsApi.listBookings({
-            limit: 100,
-        });
+        const bookingsResponse = await square.bookingsApi.listBookings(100);
 
         const bookings = bookingsResponse.result.bookings || [];
         const totalBookings = bookings.length; // This is just the fetched count, not total in DB. sufficient for MVP.
 
         // 2. Fetch Customers
-        const customersResponse = await square.customersApi.listCustomers({
-            limit: 100
-        });
+        const customersResponse = await square.customersApi.listCustomers(undefined, 100);
         const customers = customersResponse.result.customers || [];
         const activeCustomers = customers.length;
 
@@ -49,9 +45,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 
 export async function getRecentBookings() {
     try {
-        const response = await square.bookingsApi.listBookings({
-            limit: 5,
-        });
+        const response = await square.bookingsApi.listBookings(5);
         // Serialize QueryBigInt issues if any (Next.js server actions limitation with BigInt)
         // Square IDs are strings, but some fields might be BigInt.
         // JSON.parse(JSON.stringify) is a hack but works for simple objects.
@@ -64,9 +58,7 @@ export async function getRecentBookings() {
 
 export async function getBookings() {
     try {
-        const response = await square.bookingsApi.listBookings({
-            limit: 100, // Fetch more for the full list
-        });
+        const response = await square.bookingsApi.listBookings(100);
         return JSON.parse(JSON.stringify(response.result.bookings || []));
     } catch (error) {
         console.error("Error fetching bookings:", error);
