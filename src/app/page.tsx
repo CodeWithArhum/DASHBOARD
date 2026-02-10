@@ -7,73 +7,76 @@ export default async function DashboardPage() {
     const recentBookings = await getRecentBookings();
 
     return (
-        <div className="container animate-fade-in">
-            {/* Header */}
-            <header className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
-                <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Dashboard</h1>
-                    <p className="text-muted">Overview of your bookings and performance.</p>
-                </div>
-                <button className="glass-panel" style={{ padding: '0.75rem 1.5rem', cursor: 'pointer', color: 'white' }}>
-                    + New Booking
-                </button>
-            </header>
+        <div>
+            <div className="page-header" style={{ marginBottom: '6rem' }}>
+                <h1 style={{ fontSize: '4.5rem', fontWeight: 800, letterSpacing: '-4px', textTransform: 'uppercase' }}>Overview</h1>
+            </div>
 
             {/* Metrics Grid */}
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', marginBottom: '3rem' }}>
-                <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                    <p className="text-muted text-sm">Total Bookings (Last 100)</p>
-                    <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>{metrics.totalBookings}</h2>
-                    <p className="text-success text-sm">Live Data</p>
+            <div className="metrics-grid">
+                <div className="glass-card">
+                    <div className="metric-content">
+                        <p className="metric-label">Total Bookings</p>
+                        <h2 className="metric-value">{metrics.totalBookings}</h2>
+                    </div>
                 </div>
-                <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                    <p className="text-muted text-sm">Revenue (Est.)</p>
-                    <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>{metrics.estimatedRevenue}</h2>
-                    <p className="text-muted text-sm">Requires Order Sync</p>
+                <div className="glass-card">
+                    <div className="metric-content">
+                        <p className="metric-label">Active Customers</p>
+                        <h2 className="metric-value">{metrics.activeCustomers}</h2>
+                    </div>
                 </div>
-                <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                    <p className="text-muted text-sm">Active Customers</p>
-                    <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>{metrics.activeCustomers}</h2>
-                    <p className="text-success text-sm">Returning</p>
+                <div className="glass-card">
+                    <div className="metric-content">
+                        <p className="metric-label">Estimated Revenue</p>
+                        <h2 className="metric-value" style={{ fontSize: metrics.estimatedRevenue === 'Error' ? '2.5rem' : '4.2rem' }}>
+                            {metrics.estimatedRevenue}
+                        </h2>
+                    </div>
                 </div>
             </div>
 
-            {/* Recent Activity Section */}
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Recent Bookings</h3>
-            <div className="glass-panel" style={{ padding: '0' }}>
-                {recentBookings.length === 0 ? (
-                    <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--secondary)' }}>
-                        <p>No recent bookings found.</p>
-                    </div>
-                ) : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '1px solid var(--card-border)' }}>
-                                <th style={{ padding: '1rem', color: 'var(--secondary)' }}>ID</th>
-                                <th style={{ padding: '1rem', color: 'var(--secondary)' }}>Start Time</th>
-                                <th style={{ padding: '1rem', color: 'var(--secondary)' }}>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recentBookings.map((booking: any) => (
-                                <tr key={booking.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
-                                    <td style={{ padding: '1rem' }}>{booking.id.substring(0, 8)}...</td>
-                                    <td style={{ padding: '1rem' }}>{new Date(booking.startAt).toLocaleString()}</td>
-                                    <td style={{ padding: '1rem' }}>
-                                        <span style={{
-                                            padding: '0.25rem 0.5rem',
-                                            borderRadius: '4px',
-                                            background: booking.status === 'ACCEPTED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                                            color: booking.status === 'ACCEPTED' ? '#10b981' : 'inherit'
-                                        }}>
-                                            {booking.status}
-                                        </span>
-                                    </td>
+            {/* Recent Bookings Section */}
+            <div style={{ marginTop: '5rem' }}>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '3.5rem' }}>Recent Bookings</h3>
+                <div className="table-wrap">
+                    {recentBookings.length === 0 ? (
+                        <div style={{ padding: '5rem', textAlign: 'center', opacity: 0.5 }}>
+                            <p style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>No recent bookings found</p>
+                        </div>
+                    ) : (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Start Time</th>
+                                    <th>Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+                            </thead>
+                            <tbody>
+                                {recentBookings.map((booking: any) => (
+                                    <tr key={booking.id}>
+                                        <td style={{ fontWeight: 800 }}>{booking.id.substring(0, 8).toUpperCase()}</td>
+                                        <td style={{ color: 'var(--secondary)', fontWeight: 600 }}>{new Date(booking.startAt).toLocaleString()}</td>
+                                        <td>
+                                            <span style={{
+                                                padding: '8px 18px',
+                                                borderRadius: '100px',
+                                                background: 'rgba(255, 255, 255, 0.06)',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 900,
+                                                color: 'var(--accent)',
+                                                textTransform: 'uppercase'
+                                            }}>
+                                                {booking.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
             </div>
         </div>
     );

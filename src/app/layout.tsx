@@ -14,9 +14,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className="flex">
+            <body style={{ display: 'flex' }}>
                 <Sidebar />
-                <main style={{ marginLeft: '250px', width: 'calc(100% - 250px)' }}>
+                <main className="main-content">
                     {children}
                 </main>
             </body>
